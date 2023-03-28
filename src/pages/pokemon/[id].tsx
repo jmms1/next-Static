@@ -76,7 +76,7 @@ export const PokemonPage: NextPage<Props> = ({pokemon}) => {
             <Card.Body>
               {
                 pokemon?.types.map( type => (
-                  <Text h1 transform="capitalize">{type.type.name}</Text>
+                  <Text key={type.slot} h1 transform="capitalize">{type.type.name}</Text>
                 ))
               }
             </Card.Body>
