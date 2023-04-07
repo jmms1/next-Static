@@ -14,7 +14,7 @@ export const FavoriteCards: FC<Props> = ({favoritesPokemons}) => {
     {
       favoritesPokemons.map( id => (
 
-        <FavCard id={id}/>
+        <FavCard id={id} key={id}/>
 
       ))
     }
