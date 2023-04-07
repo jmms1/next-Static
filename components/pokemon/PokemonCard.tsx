@@ -13,7 +13,7 @@ export const PokemonCard: FC<Props> = ({pokemon}) => {
 
 
   const onPokemonClick: MouseEventHandler<HTMLButtonElement> = () => {
-    router.push(`/pokemon/${pokemon.id}`)
+    router.push(`/name/${pokemon.name}`)
   }
 
   return (

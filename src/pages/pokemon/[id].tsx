@@ -4,6 +4,9 @@ import { Button, Card, Container, Grid, Image, Text } from "@nextui-org/react";
 import { pokeApi } from "../../../api";
 import { Layout } from "../../../components/layouts"
 import { Pokeresponse, PokeSmallresponse } from "../../../interfaces";
+import { useState } from "react";
+import { getPokemonInfo, localFavorites } from "../../../utils";
+import conffeti from 'canvas-confetti'; 
 
 
 
@@ -15,7 +18,28 @@ interface Props {
 
 export const PokemonPage: NextPage<Props> = ({pokemon}) => {
 
-  console.log(pokemon);
+
+  const [isInFavorites, setIsInFavorites] = useState(localFavorites.existInFavorites(pokemon.id));
+
+
+  const onToggleFavorite = ( ) => {
+
+    localFavorites.toggleFavorite(pokemon.id); 
+    setIsInFavorites( !isInFavorites );
+    
+    if(isInFavorites) return; 
+
+    conffeti({
+      zIndex: 999,
+      particleCount: 100,
+      spread: 180,
+      angle: -100,
+      origin: {
+        y: 0, 
+        x: 1
+      }
+    })
+  }
 
   return (
     <Layout title={pokemon.name}>
@@ -36,7 +60,12 @@ export const PokemonPage: NextPage<Props> = ({pokemon}) => {
           <Card>
             <Card.Header css={{display: 'flex', justifyContent: 'space-between'}}>
               <Text h1 transform="capitalize">{pokemon.name}</Text>
-              <Button color={'gradient'} ghost>Guardar en Favoritos</Button>
+              <Button
+                color={'gradient'}
+                bordered={!isInFavorites} 
+                onPress={onToggleFavorite}
+                >{isInFavorites ? 'En favoritos': 'Guardar en Favoritos'}
+                </Button>
             </Card.Header>
             <Card.Body>
               <Text size={30}>Imagenes:</Text>
@@ -107,17 +136,7 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 export const  getStaticProps: GetStaticProps =  async({params}) => {
 
   const { id } = params as { id: string };
-  const { data } = await pokeApi.get<Pokeresponse>(`/pokemon/${id}`);
-
-  const pokemon: PokeSmallresponse = {
-    id: data.id,
-    is_default: data.is_default,
-    location_area_encounters: data.location_area_encounters,
-    name: data.name,
-    species: data.species,
-    sprites: data.sprites,
-    types: data.types,
-  }
+  const pokemon = await getPokemonInfo(id); 
 
   return {
     props: {
